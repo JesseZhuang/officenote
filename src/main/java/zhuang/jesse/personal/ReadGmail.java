@@ -106,7 +106,11 @@ public class ReadGmail {
                     // system line separator is "\r\n" on windows 10
 
                     // remove line returns, extra <br>s, extra white spaces
-                    content = content.replace(System.lineSeparator(), "")
+
+                    // content = content.replace(System.lineSeparator(), "")
+                    // need to use \r\n since the email message read has \r\n even when read in linux, either through
+                    // jar file on command line or IntelliJ Idea in Linux mint, 2017-02-06
+                    content = content.replace("\r\n", "")
                             .replaceAll("((<br />)\\s*){2,}", "<br />")
                             .replaceAll("\\s{2,}", " ").replace("·", "•");
 
@@ -142,6 +146,10 @@ public class ReadGmail {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // System.out.println("All Blurbs:");
+        // for (Blurb blurb : blurbs) System.out.println(blurb.toString());
+
         return blurbs;
     }
 
@@ -272,12 +280,17 @@ public class ReadGmail {
 
     public static void main(String[] args) {
 
-        // List<Blurb> blurbs = ReadGmail.fetchBlurbs();
-        // Blurb.writeBlurbs("io/new-blurbs-test.html", blurbs);
+        Scanner scanner1 = new Scanner(System.in);
+
+        String password = scanner1.nextLine();
+        scanner1.close();
+
+        List<Blurb> blurbs = ReadGmail.fetchBlurbs(password);
+        Blurb.writeBlurbs("io/new-blurbs-test.html", blurbs);
 
         // System.out.println("mandu".indexOf("man", 0));
 
-        testRead();
+        // testRead();
         // System.out.println("FW : eflyers to
         // OM's".matches(".*(?i)fl[yi]ers.*"));
     }
