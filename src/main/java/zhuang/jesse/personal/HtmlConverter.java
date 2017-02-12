@@ -148,6 +148,8 @@ public class HtmlConverter {
         System.out.println("test".equals("test"));
         System.out.println("test" == "test");
         System.out.println("\u2022" == "•");
+        System.out.println(String.format("\\u%04x", (int) '·'));
+        System.out.println(String.format("\\u%04x", (int) '•'));
     }
 
     public static void main(String[] args) {

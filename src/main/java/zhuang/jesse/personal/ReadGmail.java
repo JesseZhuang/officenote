@@ -247,8 +247,9 @@ public class ReadGmail {
                         signatureIndex + 1)) >= 0) {
                     signatureIndex = temp;
                 }
-                int listStart = fliers.indexOf("District homepage.")
-                        + "District homepage.".length();
+                // Oscar Halpert sometimes does not use period . after homepage
+                // int listStart = fliers.indexOf("District homepage.") + "District homepage.".length();
+                int listStart = fliers.indexOf('*');
                 if (signatureIndex < listStart) result += fliers.substring(listStart);
                 else result += fliers.substring(listStart, signatureIndex);
                 result = result.replaceAll("((<br />)\\s*){2,}", "<br>")
@@ -282,6 +283,7 @@ public class ReadGmail {
 
         Scanner scanner1 = new Scanner(System.in);
 
+        System.out.print("Password for Office Notes Gmail: ");
         String password = scanner1.nextLine();
         scanner1.close();
 
