@@ -2,3 +2,5 @@ out/
 .idea/
 io/
 target/
+.DS_Store
+classes/
