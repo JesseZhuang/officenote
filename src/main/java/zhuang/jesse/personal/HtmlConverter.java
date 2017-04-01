@@ -76,9 +76,9 @@ public class HtmlConverter {
         // _|!:,.;]*[-a-zA-Z"
         // + "0-9+&@#/%=~_|])+[\\w:()&-,A-Za-z/0-9\\s]+(<br\\s+/>)*))+";
         // String listPattern = "(<br\\s+/>)?(•[\\w.\\s]+(<br\\s+/>)*)+";
-        String listPattern = "(<br\\s+/>)?(•[\\w.\\s&-:()0-9/(https?|ftp|file)"
+        String listPattern = "(<br\\s+/>)?(•[\\w.\\s&-:\"()0-9/(https?|ftp|file)"
                 + "://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]"
-                + "*[-a-zA-Z0-9+&@#/%=~_|–,])]+(<br\\s+/>)*)+";
+                + "*[-a-zA-Z0-9+&@#/\"%=~_|–,])]+(<br\\s+/>)*)+";
         String listWrap = "<ul>$0</ul>";
         // str = str.replaceAll(listPattern_eflier,
         // listWrap).replaceAll("(<br\\s+/>)*•", "</li><li>")

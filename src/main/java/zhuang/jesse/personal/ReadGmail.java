@@ -247,17 +247,30 @@ public class ReadGmail {
                         signatureIndex + 1)) >= 0) {
                     signatureIndex = temp;
                 }
-                // Oscar Halpert sometimes does not use period . after homepage
-                // int listStart = fliers.indexOf("District homepage.") + "District homepage.".length();
-                int listStart = fliers.indexOf('*');
+
+                // Damn Oscar Halpert or Kelly Carlson or gmail, format change again
+                String fliersLC = fliers.toLowerCase();
+
+                int listStart = 0;
+
+                String listStartPrefix = "district homepage.";
+
+                if ((listStart = fliersLC.indexOf(listStartPrefix)) < 0) {
+                    listStartPrefix = "district homepage";
+                    if ((listStart = fliersLC.indexOf(listStartPrefix)) < 0) {
+                        System.out.println("Cannot find district homepage in community fliers email.");
+                        System.exit(-1);
+                    }
+                }
+                listStart += listStartPrefix.length();
                 if (signatureIndex < listStart) result += fliers.substring(listStart);
                 else result += fliers.substring(listStart, signatureIndex);
                 result = result.replaceAll("((<br />)\\s*){2,}", "<br>")
                         .replaceAll("\\s{2,}", " ")
                         // .replace("<htt", ", eFlier at htt").replace(">", "")
                         .replaceAll("(<)(\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?="
-                                + "~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])(>)", ", eFlier at $2")
-                        .replace("·", "<br />•").replace("*", "<br />•")
+                                + "~_|!:,\".;]*[-a-zA-Z0-9+&@#/%=~_|])(>)", ", eFlier at $2")
+                        .replace("·", "<br />•").replace("- ", "<br />•")
                         .replace("&", "&amp;");
                 // .replace(System.lineSeparator(), "")
                 // .replaceAll("((<br />)\\s*){2,}", "<br>")
