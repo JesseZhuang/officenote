@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ReadGmail {
     private final static String HOST = "imap.gmail.com";
@@ -238,34 +240,30 @@ public class ReadGmail {
             if (b.isMimeType("text/plain")) {
                 String fliers = (String) b.getContent();
                 // System.out.println("flier found" + fliers);
-                // System.out.println("District homepage. at " +
-                // fliers.indexOf("District homepage."));
-                // System.out.println("District homepage. at " + fliers.indexOf("Oscar
-                // Halpert"));
-                int signatureIndex = 0, temp = 0;
-                while ((temp = fliers.indexOf("Oscar Halpert",
-                        signatureIndex + 1)) >= 0) {
-                    signatureIndex = temp;
-                }
-
-                // Damn Oscar Halpert or Kelly Carlson or gmail, format change again
-                String fliersLC = fliers.toLowerCase();
-
                 int listStart = 0;
 
-                String listStartPrefix = "district homepage.";
-
-                if ((listStart = fliersLC.indexOf(listStartPrefix)) < 0) {
-                    listStartPrefix = "district homepage";
-                    if ((listStart = fliersLC.indexOf(listStartPrefix)) < 0) {
-                        System.out.println("Cannot find district homepage in community fliers email.");
-                        System.exit(-1);
-                    }
+                final String LIST_PATTERN = "(-\\s[\\w\\s&-:\"<0-9/]+(https?|ftp|file)"
+                        + "://[-a-zA-Z0-9+&#/%?=~_|!:,.;>]"
+                        + "+\\s*:\\s*[-a-zA-Z0-9;\\s+&#/:(\"%=~_|–,]+[)](\\sefliers)?)+";
+                Pattern pattern = Pattern.compile(LIST_PATTERN);
+                Matcher matcher = pattern.matcher(fliers);
+                // int count = 0;
+                if (matcher.find()) listStart = matcher.start();
+                int listEnd = fliers.length();
+                while (matcher.find()) {
+                    // count++;
+                    // System.out.println("Match number "
+                    //     + count);
+//                    System.out.println("start(): "
+//                            + matcher.start());
+//                    System.out.println("end(): "
+//                            + matcher.end());
+//                    System.out.println("matched segment: " + result.substring(matcher.start(), matcher.end()));
+                    listEnd = matcher.end();
                 }
-                listStart += listStartPrefix.length();
-                if (signatureIndex < listStart) result += fliers.substring(listStart);
-                else result += fliers.substring(listStart, signatureIndex);
-                result = result.replaceAll("((<br />)\\s*){2,}", "<br>")
+                fliers = fliers.substring(listStart, listEnd);
+//                System.out.println(result);
+                fliers = fliers.replaceAll("((<br />)\\s*){2,}", "<br>")
                         .replaceAll("\\s{2,}", " ")
                         // .replace("<htt", ", eFlier at htt").replace(">", "")
                         .replaceAll("(<)(\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?="
@@ -274,8 +272,7 @@ public class ReadGmail {
                         .replace("&", "&amp;");
                 // .replace(System.lineSeparator(), "")
                 // .replaceAll("((<br />)\\s*){2,}", "<br>")
-                // .replaceAll("\\s{2,}", " ");
-                // System.out.println(result);
+                result += fliers;
                 break;
         /*
          * Without break same text appears twice in my tests.
