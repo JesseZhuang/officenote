@@ -130,6 +130,7 @@ public class OfficeNote {
                     List<Blurb> blurbs = addBlurbs(NEW_BLURB, STAYON_BLURB);
                     blurbs = Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs);
                     Blurb.writeBlurbsForGoogleDoc(GOOGLE_DOC, blurbs);
+                    System.out.println("Finished generating 2 MailChimp and 1 GoogleDoc files.");
                     break;
                 case "-mc":
                     List<Blurb> blurbs2 = addBlurbs(NEW_BLURB, STAYON_BLURB);
