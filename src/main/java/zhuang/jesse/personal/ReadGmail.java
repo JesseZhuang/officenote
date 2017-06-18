@@ -240,33 +240,33 @@ public class ReadGmail {
             if (b.isMimeType("text/plain")) {
                 String fliers = (String) b.getContent();
                 // System.out.println("flier found" + fliers);
-                int listStart = 0;
 
-                final String LIST_PATTERN = "(-\\s[\\w\\s&-:\"<0-9/]+(https?|ftp|file)"
-                        + "://[-a-zA-Z0-9+&#/%?=~_|!:,.;>]"
-                        + "+\\s*:\\s*[-a-zA-Z0-9;\\s+&#/:(\"%=~_|–,]+[)](\\sefliers)?)+";
+                final String LIST_PATTERN = "(\\r\\n\\s*-\\s+[\\-\\w\\s&,&&[^><]]+\\w+"
+                        + "\\r\\n\\s*<(https?|ftp|file)://[\\w+&#/%?=~_|!:,.;-]+>"
+                        + "\\r\\n\\s*:\\s*[\\-\\w\\s+&#;/:)(\"%=~_|,&&[^\r\n]]+)+";
                 Pattern pattern = Pattern.compile(LIST_PATTERN);
                 Matcher matcher = pattern.matcher(fliers);
-                // int count = 0;
-                if (matcher.find()) listStart = matcher.start();
-                int listEnd = fliers.length();
-                while (matcher.find()) {
-                    // count++;
-                    // System.out.println("Match number "
-                    //     + count);
+//                int count = 0;
+//                System.out.println(fliers);
+                if (matcher.find()) fliers = fliers.substring(matcher.start(), matcher.end());
+//                while (matcher.find()) {
+//                    count++;
+//                    System.out.println("Match number "
+//                            + count);
 //                    System.out.println("start(): "
 //                            + matcher.start());
 //                    System.out.println("end(): "
 //                            + matcher.end());
-//                    System.out.println("matched segment: " + result.substring(matcher.start(), matcher.end()));
-                    listEnd = matcher.end();
-                }
-                fliers = fliers.substring(listStart, listEnd);
+//                    System.out.println("matched segment: " + fliers.substring(matcher.start(), matcher.end()));
+//                    listEnd = matcher.end();
+//                }
+//                System.out.println("count " + count);
+
 //                System.out.println(result);
                 fliers = fliers.replaceAll("((<br />)\\s*){2,}", "<br>")
                         .replaceAll("\\s{2,}", " ")
                         // .replace("<htt", ", eFlier at htt").replace(">", "")
-                        .replaceAll("(<)(\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?="
+                        .replaceAll("\\s(<)(\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?="
                                 + "~_|!:,\".;]*[-a-zA-Z0-9+&@#/%=~_|])(>)", ", eFlier at $2")
                         .replace("·", "<br />•").replace("- ", "<br />•")
                         .replace("&", "&amp;");
