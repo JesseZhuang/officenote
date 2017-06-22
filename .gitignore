@@ -4,3 +4,4 @@ io/
 target/
 .DS_Store
 classes/
+src/main/resources/client_secret_madrona_officenotes.json
