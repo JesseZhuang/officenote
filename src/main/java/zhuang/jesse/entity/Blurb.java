@@ -1,5 +1,7 @@
-package zhuang.jesse.personal;
+package zhuang.jesse.entity;
 
+
+import zhuang.jesse.util.HtmlConverter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,7 +44,7 @@ public class Blurb {
     private String flyerURLs;
     private String imageURL;
 
-    protected String getTitle() {
+    public String getTitle() {
         return title;
     }
 

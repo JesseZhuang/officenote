@@ -1,7 +1,7 @@
-package zhuang.jesse.personal;
+package zhuang.jesse.util;
 
 /**
- * Utility class used to wrap web urls,email addresses, and unordered lists that
+ * Utility class used to wrap web urls, email addresses, and unordered lists with html that
  * are commonly used in the school newsletter.
  * <p>
  * Use {@link #convert(String)} method to convert simple text to wrapped html

@@ -1,5 +1,7 @@
-package zhuang.jesse.personal;
+package zhuang.jesse.google;
 
+
+import zhuang.jesse.entity.Blurb;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;

@@ -1,5 +1,9 @@
-package zhuang.jesse.personal;
+package zhuang.jesse;
 
+
+import zhuang.jesse.entity.Blurb;
+import zhuang.jesse.google.ReadGcal;
+import zhuang.jesse.google.ReadGmail;
 
 import java.io.IOException;
 import java.util.List;
