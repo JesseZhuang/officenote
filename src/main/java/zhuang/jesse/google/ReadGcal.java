@@ -16,6 +16,8 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import zhuang.jesse.constants.MailChimpConstants;
+import zhuang.jesse.util.FileUtils;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -190,9 +192,8 @@ public class ReadGcal {
             OutputStreamWriter wr2 = new OutputStreamWriter(
                     new FileOutputStream(htmlFile), "UTF-8");
 
-            final String calSticky = "io/calSticky.html";
-
-            wr2.write("<span class=\"content\">\n");
+            wr2.write("<!-- forMailChimpLeft start -->\n" +
+                    "<span class=\"content\">\n");
 
             LocalDateTime lastStart = null;
             boolean allDayEvent = false, moreThanOneDay = false;
@@ -260,17 +261,11 @@ public class ReadGcal {
             wr1.write("\n\n");
             wr1.close();
 
-      /*
-       * delimit the input with \Z, which is the end of the string anchor. This
-       * ultimately makes the input have one actual token, which is the entire
-       * file, so it can be read with one call to next().
-       */
             // write the calendar sticky section
-            Scanner sc = new Scanner(new File(calSticky));
-            String content = sc.useDelimiter("\\Z").next();
-            sc.close();
-            wr2.write("</span><br>" + content);
+            wr2.write("</span><br>" + MailChimpConstants.CALENDAR_STICKY + "\n<!-- forMailChimpLeft end -->");
             wr2.close();
+
+            MailChimpConstants.LEFT_COLUMN = FileUtils.readFileToString(htmlFile);
         }
 
     }

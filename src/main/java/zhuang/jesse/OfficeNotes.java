@@ -1,9 +1,13 @@
 package zhuang.jesse;
 
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import zhuang.jesse.config.AppConfig;
 import zhuang.jesse.entity.Blurb;
 import zhuang.jesse.google.ReadGcal;
 import zhuang.jesse.google.ReadGmail;
+import zhuang.jesse.mailchimp.EcwidCampaignFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,7 +39,7 @@ import java.util.Scanner;
  * @author Zexi Jesse Zhuang
  */
 
-public class OfficeNote {
+public class OfficeNotes {
     // if this app is run from command line folder path needs to be ../io/
     private static final String FOLDER = "io/";
     private static final String NEW_BLURB = FOLDER + "new-blurbs.html";
@@ -61,7 +65,7 @@ public class OfficeNote {
 
         List<Blurb> blurbs = ReadGmail.fetchBlurbs(password);
 
-        System.out.println("finished reading");
+        System.out.println("Finished reading office note submissions.");
 
         Blurb.writeBlurbs(saveToFile, blurbs);
     }
@@ -114,10 +118,14 @@ public class OfficeNote {
      */
     public static void main(String[] args) {
 
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+
         final String USAGE = "Usage: java -jar office-note.jar [-option]\n"
                 + "available options:\n"
                 + "  -fb\tto fetch blurbs from madronaofficenotes gmail account;\n"
-                + "  -wf\tto write google doc file and two html files for mailchimp;\n";
+                + "  -wf\tto write google doc file and two html files for mailchimp;\n"
+                + "  -wfmc\tto write mailchimp files only;\n"
+                + "  -mc\tto create mailchimp email campaign;\n";
 
         if (args.length != 1) System.out.println(USAGE);
         else {
@@ -136,10 +144,13 @@ public class OfficeNote {
                     Blurb.writeBlurbsForGoogleDoc(GOOGLE_DOC, blurbs);
                     System.out.println("Finished generating 2 MailChimp and 1 GoogleDoc files.");
                     break;
-                case "-mc":
+                case "-wfmc":
                     List<Blurb> blurbs2 = addBlurbs(NEW_BLURB, STAYON_BLURB);
                     Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs2);
                     break;
+                case "-mc":
+                    EcwidCampaignFactory campaignFactory = applicationContext.getBean(EcwidCampaignFactory.class);
+                    campaignFactory.doAllCampaignJobs();
                 default:
                     System.out.println(USAGE);
                     break;

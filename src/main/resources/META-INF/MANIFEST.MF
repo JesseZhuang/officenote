@@ -1,11 +1,2 @@
 Manifest-Version: 1.0
-Class-Path: google-oauth-client-1.22.0.jar google-api-services-calenda
- r-v3-rev229-1.22.0.jar google-oauth-client-java6-1.22.0.jar commons-c
- odec-1.3.jar google-http-client-1.22.0.jar jetty-6.1.26.jar google-oa
- uth-client-jetty-1.22.0.jar guava-jdk5-17.0.jar httpclient-4.0.1.jar 
- httpcore-4.0.1.jar google-api-client-java6-1.22.0.jar google-api-clie
- nt-1.22.0.jar mail-1.4.7.jar jetty-util-6.1.26.jar servlet-api-2.5-20
- 081211.jar jsr305-1.3.9.jar activation-1.1.jar commons-logging-1.1.1.
- jar google-http-client-jackson2-1.22.0.jar jackson-core-2.1.3.jar
-Main-Class: zhuang.jesse.OfficeNote
-
+Main-Class: zhuang.jesse.OfficeNotes

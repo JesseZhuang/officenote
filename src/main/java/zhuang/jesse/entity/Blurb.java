@@ -1,6 +1,8 @@
 package zhuang.jesse.entity;
 
 
+import zhuang.jesse.constants.MailChimpConstants;
+import zhuang.jesse.util.FileUtils;
 import zhuang.jesse.util.HtmlConverter;
 
 import java.io.BufferedReader;
@@ -308,7 +310,8 @@ public class Blurb {
         blurbs.addAll(pastWeeks);
         blurbs.addAll(community);
 
-        final String HEADER = "<style>\n.heading {color: rgb(128,0,0);font"
+        final String HEADER = "<!-- forMailChimpRight start -->\n" +
+                "<style>\n.heading {color: rgb(128,0,0);font"
                 + "-family: verdana,geneva,sans-serif; font-weight:bold;}\n"
                 + ".date{font-family: verdana,geneva,sans-serif; font-weight:bold;}\n"
                 + ".content{font-family:trebuchet ms,lucida grande,lucida sans"
@@ -398,11 +401,13 @@ public class Blurb {
                 wr.newLine();
                 counter++;
             }
-            wr.write("<br><br>\n");
+            wr.write("<br><br>\n" + "<!-- forMailChimpRight end -->");
 
         } catch (IOException e) {
             System.out.println("Unable to write to file " + outFile.toString());
         }
+
+        MailChimpConstants.RIGHT_COLUMN = FileUtils.readFileToString(outFile);
 
         return blurbs;
     }
@@ -450,6 +455,8 @@ public class Blurb {
             System.out.println("Write file error.");
             e.printStackTrace();
         }
+
+        MailChimpConstants.GOOGLE_DOC = FileUtils.readFileToString(outFile);
     }
 
     public static void main(String[] args) {

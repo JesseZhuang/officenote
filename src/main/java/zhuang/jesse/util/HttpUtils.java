@@ -1,6 +1,7 @@
 package zhuang.jesse.util;
 
 import com.google.api.client.http.HttpMethods;
+import zhuang.jesse.constants.MailChimpConstants;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -22,13 +23,11 @@ public class HttpUtils {
 
 
         try {
-            URL url = new URL("https://us1.api.mailchimp.com/3.0/");
+            URL url = new URL(MailChimpConstants.API_HOME);
 //            String mailchimp_key = new String(Files.readAllBytes(Paths.get("src/main/resources/mailchimp_key")));
-            String mailchimp_key = new String(Files.readAllBytes(Paths.get(HttpUtils.class.
-                    getResource("/mailchimp_key").getPath())));
-            System.out.println(mailchimp_key);
-            String encoding = Base64.getEncoder().encodeToString(("dummyUserName:" + mailchimp_key)
-                    .getBytes(StandardCharsets.UTF_8));
+            System.out.println(MailChimpConstants.API_KEY);
+            String encoding = Base64.getEncoder().encodeToString((MailChimpConstants.USERNAME + ":"
+                    + MailChimpConstants.API_KEY).getBytes(StandardCharsets.UTF_8));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(HttpMethods.GET);
             // connection.setDoOutput(true); for post request
