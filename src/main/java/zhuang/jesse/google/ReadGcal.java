@@ -2,31 +2,24 @@ package zhuang.jesse.google;
 
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
-import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import org.springframework.stereotype.Component;
+import zhuang.jesse.constants.GoogleConstants;
 import zhuang.jesse.constants.MailChimpConstants;
 import zhuang.jesse.util.FileUtils;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Properties;
 
 /**
  * Read google calendar events from office notes calendar and Madrona K8
@@ -34,87 +27,8 @@ import java.util.Scanner;
  * are not added to bearfacts calendar. Manually add them to office notes
  * calendar.
  */
+@Component
 public class ReadGcal {
-    /**
-     * Application name.
-     */
-    private static final String APPLICATION_NAME = "Google Calendar API "
-            + "Madrona OfficeNotes";
-
-    /**
-     * Directory to store user credentials for this application.
-     */
-    private static final java.io.File DATA_STORE_DIR = new java.io.File("io",
-            ".credentials/calendar-java-quickstart");
-
-    /**
-     * Global instance of the {@link FileDataStoreFactory}.
-     */
-    private static FileDataStoreFactory DATA_STORE_FACTORY;
-
-    /**
-     * Global instance of the JSON factory.
-     */
-    private static final JsonFactory JSON_FACTORY = JacksonFactory
-            .getDefaultInstance();
-
-    /**
-     * Global instance of the HTTP transport.
-     */
-    private static HttpTransport HTTP_TRANSPORT;
-
-    /**
-     * Global instance of the scopes required by this quickstart.
-     */
-    private static final List<String> SCOPES = Arrays
-            .asList(CalendarScopes.CALENDAR_READONLY);
-
-    static {
-        try {
-            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    /**
-     * Creates an authorized Credential object.
-     *
-     * @return an authorized Credential object.
-     * @throws IOException
-     */
-    public static Credential authorize() throws IOException {
-        // Load client secrets.
-    /*
-     * Tried to use 4 ..(double dots to step relative path out of this class's
-     * folder). This method still works when the file is still in bin but
-     * stopped working if the file is directly in workspace/OfficeNotes. So put
-     * the json file with ReadGcal.class.
-     *
-     * could use absolute path starting with /, which means starting from the
-     * classpath
-     */
-         InputStream in = ReadGcal.class.getResourceAsStream(
-                 "/client_secret_madrona_officenotes.json");
-
-//        InputStream in = Files.newInputStream(
-//                Paths.get("target/classes/client_secret_madrona_officenotes.json"));
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-                new InputStreamReader(in));
-
-        // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(DATA_STORE_FACTORY).setAccessType("offline")
-                .build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow,
-                new LocalServerReceiver()).authorize("user");
-        // System.out.println("Credentials saved to "
-        // + DATA_STORE_DIR.getAbsolutePath());
-        return credential;
-    }
 
     /**
      * Build and return an authorized Calendar client service.
@@ -124,9 +38,9 @@ public class ReadGcal {
      */
     public static com.google.api.services.calendar.Calendar getCalendarService()
             throws IOException {
-        Credential credential = authorize();
-        return new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT,
-                JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
+        Credential credential = GetAuthCred.authorize();
+        return new com.google.api.services.calendar.Calendar.Builder(GetAuthCred.HTTP_TRANSPORT,
+                GetAuthCred.JSON_FACTORY, credential).setApplicationName(GetAuthCred.APPLICATION_NAME).build();
     }
 
     /**
@@ -147,11 +61,11 @@ public class ReadGcal {
         // List the next 15 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
         Events events;
-        events = service.events().list("madronabearfacts@gmail.com")
+        events = service.events().list(GoogleConstants.properties.getProperty("bearfacts.email"))
                 .setMaxResults(15).setTimeMin(now).setOrderBy("startTime")
                 .setSingleEvents(true).execute();
         Events officeNotesEvents = service.events()
-                .list("madronaofficenotes@gmail.com").setMaxResults(15).setTimeMin(now)
+                .list(GoogleConstants.properties.getProperty("officenotes.email")).setMaxResults(15).setTimeMin(now)
                 .setOrderBy("startTime").setSingleEvents(true).execute();
         List<Event> items = events.getItems();
         items.addAll(officeNotesEvents.getItems());
@@ -410,8 +324,8 @@ public class ReadGcal {
         // System.out.println(Calendar.getInstance().getTime());
 
         // writeGcalEvents("io/test1.txt", "io/test1.html");
-        // getCalList(getCalendarService());
-        testProcessEvents();
+        getCalList(getCalendarService());
+//        testProcessEvents();
 
     }
 }

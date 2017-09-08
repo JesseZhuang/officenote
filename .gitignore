@@ -6,3 +6,4 @@ target/
 classes/
 src/main/resources/client_secret_madrona_officenotes.json
 src/main/resources/mailchimp*
+src/main/resources/google.properties

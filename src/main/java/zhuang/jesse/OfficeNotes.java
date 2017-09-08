@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import zhuang.jesse.config.AppConfig;
 import zhuang.jesse.entity.Blurb;
+import zhuang.jesse.google.GoogleDoc;
 import zhuang.jesse.google.ReadGcal;
 import zhuang.jesse.google.ReadGmail;
 import zhuang.jesse.mailchimp.EcwidCampaignFactory;
@@ -40,6 +41,7 @@ import java.util.Scanner;
  */
 
 public class OfficeNotes {
+    private static ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
     // if this app is run from command line folder path needs to be ../io/
     private static final String FOLDER = "io/";
     private static final String NEW_BLURB = FOLDER + "new-blurbs.html";
@@ -86,6 +88,27 @@ public class OfficeNotes {
         return newBlurbs;
     }
 
+    private static void wholeJob() throws IOException {
+        fetchBlurbs(NEW_BLURB);
+        writeFiles();
+        EcwidCampaignFactory campaignFactory = applicationContext.getBean(EcwidCampaignFactory.class);
+        campaignFactory.doAllCampaignJobs();
+        GoogleDoc googleDoc = applicationContext.getBean(GoogleDoc.class);
+        googleDoc.wholeJob();
+    }
+
+    private static void writeFiles() {
+        try {
+            ReadGcal.writeGcalEvents(GOOGLE_DOC, MAILCHIMP_LEFT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        List<Blurb> blurbs = addBlurbs(NEW_BLURB, STAYON_BLURB);
+        blurbs = Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs);
+        Blurb.writeBlurbsForGoogleDoc(GOOGLE_DOC, blurbs);
+        System.out.println("Finished generating 2 MailChimp and 1 GoogleDoc files.");
+    }
+
     /**
      * For now, three steps:
      * <p>
@@ -116,41 +139,40 @@ public class OfficeNotes {
      *
      * @param args command line flags to specify specific tasks.
      */
-    public static void main(String[] args) {
-
-        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+    public static void main(String[] args) throws IOException {
 
         final String USAGE = "Usage: java -jar office-note.jar [-option]\n"
                 + "available options:\n"
+                + "  -all\tto finish all jobs, the whole flow;\n"
                 + "  -fb\tto fetch blurbs from madronaofficenotes gmail account;\n"
                 + "  -wf\tto write google doc file and two html files for mailchimp;\n"
-                + "  -wfmc\tto write mailchimp files only;\n"
-                + "  -mc\tto create mailchimp email campaign;\n";
+                + "  -wmc\tto write mailchimp files only;\n"
+                + "  -mc\tto create mailchimp email campaign;\n"
+                + "  -gd\tto upload google doc and share with MIT chair;\n";
 
         if (args.length != 1) System.out.println(USAGE);
         else {
             switch (args[0]) {
+                case "-wmc":
+                    List<Blurb> blurbs2 = addBlurbs(NEW_BLURB, STAYON_BLURB);
+                    Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs2);
+                    break;
+                case "-all":
+                    wholeJob();
+                    break;
                 case "-fb":
                     fetchBlurbs(NEW_BLURB);
                     break;
                 case "-wf":
-                    try {
-                        ReadGcal.writeGcalEvents(GOOGLE_DOC, MAILCHIMP_LEFT);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    List<Blurb> blurbs = addBlurbs(NEW_BLURB, STAYON_BLURB);
-                    blurbs = Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs);
-                    Blurb.writeBlurbsForGoogleDoc(GOOGLE_DOC, blurbs);
-                    System.out.println("Finished generating 2 MailChimp and 1 GoogleDoc files.");
-                    break;
-                case "-wfmc":
-                    List<Blurb> blurbs2 = addBlurbs(NEW_BLURB, STAYON_BLURB);
-                    Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs2);
+                    writeFiles();
                     break;
                 case "-mc":
                     EcwidCampaignFactory campaignFactory = applicationContext.getBean(EcwidCampaignFactory.class);
                     campaignFactory.doAllCampaignJobs();
+                    // mailchimp API currently does not support specify custom campaign URL, 2017 new feature
+                case "-gd":
+                    GoogleDoc googleDoc = applicationContext.getBean(GoogleDoc.class);
+                    googleDoc.wholeJob();
                 default:
                     System.out.println(USAGE);
                     break;

@@ -24,8 +24,6 @@ public class HttpUtils {
 
         try {
             URL url = new URL(MailChimpConstants.API_HOME);
-//            String mailchimp_key = new String(Files.readAllBytes(Paths.get("src/main/resources/mailchimp_key")));
-            System.out.println(MailChimpConstants.API_KEY);
             String encoding = Base64.getEncoder().encodeToString((MailChimpConstants.USERNAME + ":"
                     + MailChimpConstants.API_KEY).getBytes(StandardCharsets.UTF_8));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

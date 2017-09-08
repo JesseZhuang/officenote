@@ -1,6 +1,7 @@
 package zhuang.jesse.google;
 
 
+import zhuang.jesse.constants.GoogleConstants;
 import zhuang.jesse.entity.Blurb;
 
 import javax.mail.*;
@@ -14,8 +15,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReadGmail {
+
+
     private final static String HOST = "imap.gmail.com";
-    private final static String USERNAME = "madronaofficenotes@gmail.com";
+    private final static String USERNAME = GoogleConstants.properties.getProperty("officenotes.email");
 
   /*
    * do not pull events for now, may implement with google calendar API later.
