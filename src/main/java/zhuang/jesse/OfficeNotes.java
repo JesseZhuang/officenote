@@ -1,6 +1,7 @@
 package zhuang.jesse;
 
 
+import org.apache.commons.cli.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import zhuang.jesse.config.AppConfig;
@@ -11,6 +12,8 @@ import zhuang.jesse.google.ReadGmail;
 import zhuang.jesse.mailchimp.EcwidCampaignFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -42,6 +45,7 @@ import java.util.Scanner;
 
 public class OfficeNotes {
     private static ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+
     // if this app is run from command line folder path needs to be ../io/
     private static final String FOLDER = "io/";
     private static final String NEW_BLURB = FOLDER + "new-blurbs.html";
@@ -54,21 +58,20 @@ public class OfficeNotes {
     private static final String MAILCHIMP_RIGHT = FOLDER
             + "forMailchimpRight.html";
 
-    private static void fetchBlurbs(String saveToFile) {
-
-        Scanner scanner1 = new Scanner(System.in);
-        System.out.print(
-                "Before we start, do you want to archive the blurbs from last week? ");
-        if (scanner1.nextLine().toLowerCase().startsWith("y"))
-            Blurb.updateBlurbs(NEW_BLURB, STAYON_BLURB, ARCHIVED_BLURB);
-        System.out.print("Password for Office Notes Gmail: ");
-        String password = scanner1.nextLine();
-        scanner1.close();
+    private static void fetchBlurbs(String saveToFile, boolean doArchive, String password) {
 
         List<Blurb> blurbs = ReadGmail.fetchBlurbs(password);
+        System.out.println("Job started at " + LocalDateTime.now() +
+                " \nFinished reading office note submissions.");
+        if (blurbs.size() == 0) {
+            System.out.println("No submissions this week.\n");
+            System.exit(1);
+        }
 
-        System.out.println("Finished reading office note submissions.");
-
+        if (doArchive) {
+            Blurb.updateBlurbs(NEW_BLURB, STAYON_BLURB, ARCHIVED_BLURB);
+            System.out.println("Updated and archived expired blurbs.");
+        }
         Blurb.writeBlurbs(saveToFile, blurbs);
     }
 
@@ -88,13 +91,23 @@ public class OfficeNotes {
         return newBlurbs;
     }
 
-    private static void wholeJob() throws IOException {
-        fetchBlurbs(NEW_BLURB);
+    private static void wholeJob(boolean doArchive, String password) throws IOException {
+        fetchBlurbs(NEW_BLURB, doArchive, password);
         writeFiles();
+        mailchimpJob();
+        googleDocJob();
+    }
+
+    private static void mailchimpJob () {
         EcwidCampaignFactory campaignFactory = applicationContext.getBean(EcwidCampaignFactory.class);
         campaignFactory.doAllCampaignJobs();
+        System.out.println("Finished mailchimp job.");
+    }
+
+    private static void googleDocJob() throws IOException {
         GoogleDoc googleDoc = applicationContext.getBean(GoogleDoc.class);
         googleDoc.wholeJob();
+        System.out.println("Finished google doc job.\n");
     }
 
     private static void writeFiles() {
@@ -141,45 +154,48 @@ public class OfficeNotes {
      */
     public static void main(String[] args) throws IOException {
 
-        final String USAGE = "Usage: java -jar office-note.jar [-option]\n"
-                + "available options:\n"
-                + "  -all\tto finish all jobs, the whole flow;\n"
-                + "  -fb\tto fetch blurbs from madronaofficenotes gmail account;\n"
-                + "  -wf\tto write google doc file and two html files for mailchimp;\n"
-                + "  -wmc\tto write mailchimp files only;\n"
-                + "  -mc\tto create mailchimp email campaign;\n"
-                + "  -gd\tto upload google doc and share with MIT chair;\n";
+        Options options = new Options();
+        Option pwdOpt = new Option("p", "password", true, "password for office notes gmail account");
+        pwdOpt.setRequired(true);
+        options.addOption("a", "archive", false, "whether to archive last week's blurbs")
+                .addOption(pwdOpt);
 
-        if (args.length != 1) System.out.println(USAGE);
-        else {
-            switch (args[0]) {
-                case "-wmc":
-                    List<Blurb> blurbs2 = addBlurbs(NEW_BLURB, STAYON_BLURB);
-                    Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs2);
-                    break;
-                case "-all":
-                    wholeJob();
-                    break;
-                case "-fb":
-                    fetchBlurbs(NEW_BLURB);
-                    break;
-                case "-wf":
-                    writeFiles();
-                    break;
-                case "-mc":
-                    EcwidCampaignFactory campaignFactory = applicationContext.getBean(EcwidCampaignFactory.class);
-                    campaignFactory.doAllCampaignJobs();
-                    // mailchimp API currently does not support specify custom campaign URL, 2017 new feature
-                case "-gd":
-                    GoogleDoc googleDoc = applicationContext.getBean(GoogleDoc.class);
-                    googleDoc.wholeJob();
-                default:
-                    System.out.println(USAGE);
-                    break;
-            }
+        OptionGroup jobsToDo = new OptionGroup();
+        jobsToDo.setRequired(true);
+        jobsToDo.addOption(new Option("all", "all-jobs", false, "do all office note jobs"))
+                .addOption(new Option("fb", "fetch-blurbs", false, "fetch blurbs from office " +
+                        "notes gmail"))
+                .addOption(new Option("wf", "write-files", false, "write files for mailchimp " +
+                        "and google doc"))
+                .addOption(new Option("mc", "mailchimp", false, "create and schedule mailchimp " +
+                        "email campaign"))
+                .addOption(new Option("gd", "google-doc", false, "upload google doc, " +
+                        "share for review"));
+        options.addOptionGroup(jobsToDo);
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd;
+
+        boolean doArchive = false;
+        String password;
+
+        try {
+            cmd = parser.parse(options, args);
+            if (cmd.hasOption("a")) doArchive = true;
+            password = cmd.getOptionValue("password");
+            if (cmd.hasOption("all")) wholeJob(doArchive, password);
+            if (cmd.hasOption("fb")) fetchBlurbs(NEW_BLURB, doArchive, password);
+            if (cmd.hasOption("wf")) writeFiles();
+            if (cmd.hasOption("mc")) mailchimpJob();
+            if (cmd.hasOption("gd")) googleDocJob();
+
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("Office Note Java Application", options);
+
+            System.exit(1);
+            return;
         }
-
-        // updateBlurbs(NEW_BLURB, "io/stay-on-blurbs-test.html",
-        // "io/archived-blurbs-test.html");
     }
 }

@@ -157,6 +157,7 @@ public class Blurb {
 
         writeBlurbs(stayOnFile, blurbs);
         appendBlurbs(archiveFile, archivedBlurbs);
+        System.out.println("Finished archiving last week's blurbs.");
     }
 
     /**

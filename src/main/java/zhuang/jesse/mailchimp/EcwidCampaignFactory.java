@@ -18,6 +18,7 @@ import zhuang.jesse.util.TimeUtils;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
@@ -100,12 +101,19 @@ public class EcwidCampaignFactory {
     }
 
     public void doAllCampaignJobs() {
+        Logger logger = Logger.getLogger("com.ecwid.maleorang");
+        logger.setLevel(Level.WARNING);
+
         String campaignId = createCampaign();
         setCampaignCotent(campaignId);
         scheduleCampaign(campaignId);
     }
 
     public static void main(String[] args) {
+
+        Logger logger = Logger.getLogger("com.ecwid.maleorang");
+        logger.setLevel(Level.WARNING);
+
         ApplicationContext context =
                 new AnnotationConfigApplicationContext(AppConfig.class);
 
@@ -114,6 +122,6 @@ public class EcwidCampaignFactory {
 //        cc.createCampaign();
 //        cc.setCampaignCotent("df17d9e6b1");
 //        cc.scheduleCampaign("df17d9e6b1");
-        cc.doAllCampaignJobs();
+//        cc.doAllCampaignJobs();
     }
 }

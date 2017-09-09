@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -122,10 +123,10 @@ public class CampaignFactory {
 
     public static void main(String[] args) throws IOException {
 
-        ApplicationContext context =
-                new AnnotationConfigApplicationContext(AppConfig.class);
-
-        CampaignFactory cc = context.getBean(CampaignFactory.class);
+//        ApplicationContext context =
+//                new AnnotationConfigApplicationContext(AppConfig.class);
+//
+//        CampaignFactory cc = context.getBean(CampaignFactory.class);
 //        Normally Spring cannot wire into external https://stackoverflow.com/questions/310271
 //        CampaignFactory cc = new CampaignFactory();
 
@@ -140,6 +141,7 @@ public class CampaignFactory {
 
 //        System.out.println(cc.campaign.getType());
 
-        cc.createCampaign();
+//        cc.createCampaign();
+        System.out.println(LocalDateTime.now());
     }
 }
