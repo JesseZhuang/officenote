@@ -5,6 +5,7 @@ import org.apache.commons.cli.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import zhuang.jesse.config.AppConfig;
+import zhuang.jesse.constants.MailChimpConstants;
 import zhuang.jesse.entity.Blurb;
 import zhuang.jesse.google.GoogleDoc;
 import zhuang.jesse.google.ReadGcal;
@@ -12,6 +13,8 @@ import zhuang.jesse.google.ReadGmail;
 import zhuang.jesse.mailchimp.EcwidCampaignFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -53,10 +56,9 @@ public class OfficeNotes {
     private static final String ARCHIVED_BLURB = FOLDER
             + "archived-blurbs.html";
     private static final String GOOGLE_DOC = FOLDER + "forGoogleDoc.txt";
-    private static final String MAILCHIMP_LEFT = FOLDER
-            + "forMailchimpLeft.html";
-    private static final String MAILCHIMP_RIGHT = FOLDER
-            + "forMailchimpRight.html";
+    private static final String MAILCHIMP_LEFT = FOLDER + "forMailchimpLeft.html";
+    private static final String MAILCHIMP_RIGHT = FOLDER + "forMailchimpRight.html";
+    private static final String MAILCHIMP_WHOLE = FOLDER + "forMailchimp.html";
 
     private static void fetchBlurbs(String saveToFile, boolean doArchive, String password) {
 
@@ -110,7 +112,7 @@ public class OfficeNotes {
         System.out.println("Finished google doc job.\n");
     }
 
-    private static void writeFiles() {
+    private static void writeFiles() throws IOException {
         try {
             ReadGcal.writeGcalEvents(GOOGLE_DOC, MAILCHIMP_LEFT);
         } catch (IOException e) {
@@ -119,7 +121,10 @@ public class OfficeNotes {
         List<Blurb> blurbs = addBlurbs(NEW_BLURB, STAYON_BLURB);
         blurbs = Blurb.writeBlurbsForMailchimp(MAILCHIMP_RIGHT, blurbs);
         Blurb.writeBlurbsForGoogleDoc(GOOGLE_DOC, blurbs);
-        System.out.println("Finished generating 2 MailChimp and 1 GoogleDoc files.");
+        MailChimpConstants.mailchimpWhole = MailChimpConstants.PART1 + MailChimpConstants.mailchimpRightColumn
+                + MailChimpConstants.PART2 + MailChimpConstants.mailchimpLeftColumn + MailChimpConstants.PART3;
+        Files.write(Paths.get(MAILCHIMP_WHOLE), MailChimpConstants.mailchimpWhole.getBytes());
+        System.out.println("Finished generating 3 MailChimp and 1 GoogleDoc files.");
     }
 
     /**

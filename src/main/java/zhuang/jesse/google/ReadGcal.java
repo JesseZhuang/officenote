@@ -19,7 +19,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Read google calendar events from office notes calendar and Madrona K8
@@ -179,7 +178,7 @@ public class ReadGcal {
             wr2.write("</span><br>" + MailChimpConstants.CALENDAR_STICKY + "\n<!-- forMailChimpLeft end -->");
             wr2.close();
 
-            MailChimpConstants.LEFT_COLUMN = FileUtils.readFileToString(htmlFile);
+            MailChimpConstants.mailchimpLeftColumn = FileUtils.readFileToString(htmlFile);
         }
 
     }

@@ -19,9 +19,10 @@ public class MailChimpConstants {
     public static final String PART2 = FileUtils.readClassPathFileToString("/mailchimp_template_part2.html");
     public static final String PART3 = FileUtils.readClassPathFileToString("/mailchimp_template_part3.html");
 
-    public static String LEFT_COLUMN;
-    public static String RIGHT_COLUMN;
-    public static String GOOGLE_DOC;
+    public static String mailchimpLeftColumn;
+    public static String mailchimpRightColumn;
+    public static String mailchimpWhole;
+    public static String googleDoc;
 
     public static void main(String[] args) {
         System.out.println(API_KEY);

@@ -408,7 +408,7 @@ public class Blurb {
             System.out.println("Unable to write to file " + outFile.toString());
         }
 
-        MailChimpConstants.RIGHT_COLUMN = FileUtils.readFileToString(outFile);
+        MailChimpConstants.mailchimpRightColumn = FileUtils.readFileToString(outFile);
 
         return blurbs;
     }
@@ -457,7 +457,7 @@ public class Blurb {
             e.printStackTrace();
         }
 
-        MailChimpConstants.GOOGLE_DOC = FileUtils.readFileToString(outFile);
+        MailChimpConstants.googleDoc = FileUtils.readFileToString(outFile);
     }
 
     public static void main(String[] args) {

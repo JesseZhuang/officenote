@@ -71,13 +71,13 @@ public class EcwidCampaignFactory {
 
         SetCampaignContentMethod job = new SetCampaignContentMethod(campaignId);
 
-        if (MailChimpConstants.LEFT_COLUMN == null) MailChimpConstants.LEFT_COLUMN =
+        if (MailChimpConstants.mailchimpLeftColumn == null) MailChimpConstants.mailchimpLeftColumn =
                 FileUtils.readFileToString("io/forMailchimpLeft.html");
-        if (MailChimpConstants.RIGHT_COLUMN == null) MailChimpConstants.RIGHT_COLUMN =
+        if (MailChimpConstants.mailchimpRightColumn == null) MailChimpConstants.mailchimpRightColumn =
                 FileUtils.readFileToString("io/forMailchimpRight.html");
 
-        job.html = MailChimpConstants.PART1 + MailChimpConstants.RIGHT_COLUMN + MailChimpConstants.PART2
-                + MailChimpConstants.LEFT_COLUMN + MailChimpConstants.PART3;
+        job.html = MailChimpConstants.PART1 + MailChimpConstants.mailchimpRightColumn + MailChimpConstants.PART2
+                + MailChimpConstants.mailchimpLeftColumn + MailChimpConstants.PART3;
 
         try {
             CLIENT.execute(job);
