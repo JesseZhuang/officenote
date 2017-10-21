@@ -247,8 +247,8 @@ public class ReadGmail {
                 // System.out.println("flier found" + fliers);
 
                 final String LIST_PATTERN = "(\\r\\n\\s*-\\s+[\\-\\w\\s&,&&[^><]]+\\w+"
-                        + "\\r\\n\\s*<(https?|ftp|file)://[\\w+&#/%?=~_|!:,.;-]+>"
-                        + "\\r\\n\\s*:\\s*[\\-\\w\\s+&#;/:)(\"%=~_|,&&[^\r\n]]+)+";
+                        + "\\r\\n\\s*<(https?|ftp|file)://[\\w+&#/%?=~_|!:,.;-]+>:"
+                        + "\\r\\n\\s*[\\-\\w\\s+&#;/:)(\"%=~_|,&&[^\r\n]]+)+";
                 Pattern pattern = Pattern.compile(LIST_PATTERN);
                 Matcher matcher = pattern.matcher(fliers);
 //                int count = 0;
