@@ -203,9 +203,10 @@ public class ReadGmail {
        * multipart/ALTERNATIVE; boundary=
        * _000_af130904c8a343259126d8f56c808481EXMB01edmondswednetedu_
        */
-            for (int i = 1; i < totalMessageCounts; i++) {
+            for (int i = 1; i <= totalMessageCounts; i++) {
                 Message msg = inbox.getMessage(i);
                 String msgSubject = msg.getSubject();
+//                System.out.println(i + " " +msgSubject);
                 if (msgSubject.matches(TARGET2RE)) {
                     System.out.println(getMultipartChild(msg));
                 }
@@ -226,8 +227,9 @@ public class ReadGmail {
         final String EFLIERS = "You can find many activities such as Sports and"
                 + " Arts lessons, Community Activities, and Youth Organizations"
                 + ", etc., all of which are approved by the Edmonds School "
-                + "District. You can view all Community eFliers at http://www"
-                + ".edmonds.wednet.edu/Domain/130 on the District website under"
+                + "District. You can view all Community eFliers at "
+                + "http://www.edmonds.wednet.edu/community/community_e_fliers"
+                + " on the District website under"
                 + " the \"Community\" link on the homepage.";
 
         String result = EFLIERS;
@@ -244,17 +246,22 @@ public class ReadGmail {
             // ");
             if (b.isMimeType("text/plain")) {
                 String fliers = (String) b.getContent();
-                // System.out.println("flier found" + fliers);
+//                 System.out.println("flier found" + fliers);
 
                 final String LIST_PATTERN = "(\\r\\n\\s*-\\s+[\\-\\w\\s&,&&[^><]]+\\w+"
-                        + "\\r\\n\\s*<(https?|ftp|file)://[\\w+&#/%?=~_|!:,.;-]+>:"
+                        + "\\r\\n\\s*<(https?|ftp|file)://[\\w+&#/%?=~'_|!:,.;-]+>(:|\\r\\n-)"
                         + "\\r\\n\\s*[\\-\\w\\s+&#;/:)(\"%=~_|,&&[^\r\n]]+)+";
                 Pattern pattern = Pattern.compile(LIST_PATTERN);
                 Matcher matcher = pattern.matcher(fliers);
-//                int count = 0;
+//                int count = 1;
+                int listEnd = 0, listStart = 0;
 //                System.out.println(fliers);
-                if (matcher.find()) fliers = fliers.substring(matcher.start(), matcher.end());
-//                while (matcher.find()) {
+//                if (matcher.find()) fliers = fliers.substring(matcher.start(), matcher.end());
+                if (matcher.find()) {
+                    listStart = matcher.start();
+                    listEnd = matcher.end();
+                }
+                while (matcher.find()) {
 //                    count++;
 //                    System.out.println("Match number "
 //                            + count);
@@ -263,20 +270,24 @@ public class ReadGmail {
 //                    System.out.println("end(): "
 //                            + matcher.end());
 //                    System.out.println("matched segment: " + fliers.substring(matcher.start(), matcher.end()));
-//                    listEnd = matcher.end();
-//                }
+                    listEnd = matcher.end();
+                }
 //                System.out.println("count " + count);
 
-//                System.out.println(result);
-                fliers = fliers.replaceAll("((<br />)\\s*){2,}", "<br>")
+                fliers = fliers.substring(listStart, listEnd);
+//                System.out.println("result fliers " + fliers);
+                fliers = fliers.replaceAll("\\r\\n\\s+-\\s{1,3}+(\\w+)", "<br />•$1")
+                        .replaceAll("((<br />)\\s*){2,}", "<br>")
                         .replaceAll("\\s{2,}", " ")
                         // .replace("<htt", ", eFlier at htt").replace(">", "")
                         .replaceAll("\\s(<)(\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?="
-                                + "~_|!:,\".;]*[-a-zA-Z0-9+&@#/%=~_|])(>)", ", eFlier at $2")
-                        .replace("·", "<br />•").replace("- ", "<br />•")
+                                + "~_|!':,\".;]*[-a-zA-Z0-9+&@#/%=~_|])(>)", ", eFlier at $2")
+                        .replace("·", "<br />•")
+//                        .replace("- ", "<br />•")
                         .replace("&", "&amp;");
                 // .replace(System.lineSeparator(), "")
                 // .replaceAll("((<br />)\\s*){2,}", "<br>")
+//                System.out.println("result fliers " + fliers);
                 result += fliers;
                 break;
         /*
@@ -285,7 +296,7 @@ public class ReadGmail {
             } else if (b.isMimeType("text/html")) {
                 String html = (String) b.getContent();
                 result = result + "text/html " + j + "\n" + html;
-                System.out.println(result);
+//                System.out.println(result);
             } else if (b.getContentType().contains("multipart")) {
                 return getMultipartChild(b);
             }
@@ -296,18 +307,18 @@ public class ReadGmail {
 
     public static void main(String[] args) {
 
-        Scanner scanner1 = new Scanner(System.in);
-
-        System.out.print("Password for Office Notes Gmail: ");
-        String password = scanner1.nextLine();
-        scanner1.close();
-
-        List<Blurb> blurbs = ReadGmail.fetchBlurbs(password);
-        Blurb.writeBlurbs("io/new-blurbs-test.html", blurbs);
+//        Scanner scanner1 = new Scanner(System.in);
+//
+//        System.out.print("Password for Office Notes Gmail: ");
+//        String password = scanner1.nextLine();
+//        scanner1.close();
+//
+//        List<Blurb> blurbs = ReadGmail.fetchBlurbs(password);
+//        Blurb.writeBlurbs("io/new-blurbs-test.html", blurbs);
 
         // System.out.println("mandu".indexOf("man", 0));
 
-        // testRead();
+         testRead();
         // System.out.println("FW : eflyers to
         // OM's".matches(".*(?i)fl[yi]ers.*"));
     }

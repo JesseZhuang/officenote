@@ -63,7 +63,7 @@ public class OfficeNotes {
     private static void fetchBlurbs(String saveToFile, boolean doArchive, String password) {
 
         List<Blurb> blurbs = ReadGmail.fetchBlurbs(password);
-        System.out.println("Job started at " + LocalDateTime.now() +
+        System.out.println("Read gmail job finished at " + LocalDateTime.now() +
                 " \nFinished reading office note submissions.");
         if (blurbs.size() == 0) {
             System.out.println("No submissions this week.\n");
