@@ -26,7 +26,7 @@ public class HtmlConverter {
     // *: 0 or more; ?: 0 or 1; + 1 or more; re{n}: exactly n repeats of re
     // [] matches any single character in brackets
     public static final String URL_PATTERN = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@"
-            + "#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
+            + "#/%?=~_|!:,'.;]+[-a-zA-Z0-9+&@%#/=~_|]+";
     /*
      * "(http://|https://|HTTP://|HTTPS://)+" +
      * "(www.)?([a-zA-Z0-9-_]+)[.]([a-zA-Z0-9]+[.])*([a-zA-Z0-9]+)" +
@@ -150,6 +150,12 @@ public class HtmlConverter {
         System.out.println("\u2022" == "•");
         System.out.println(String.format("\\u%04x", (int) '·'));
         System.out.println(String.format("\\u%04x", (int) '•'));
+
+        String urlWithSingleQuote = "http://www.edmonds.wednet.edu/UserFiles/Servers/Server_306670/File/Community/" +
+                "Community%20eFliers/Community%20Activites/MTH%20Boosters%20Breakfast%20in%20Santa's%20Workshop.pdf";
+
+        System.out.println(urlWithSingleQuote.replaceAll(URL_PATTERN, URL_REPL));
+
     }
 
     public static void main(String[] args) {

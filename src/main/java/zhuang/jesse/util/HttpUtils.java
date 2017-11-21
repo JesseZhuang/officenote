@@ -4,14 +4,14 @@ import com.google.api.client.http.HttpMethods;
 import zhuang.jesse.constants.MailChimpConstants;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Scanner;
 
 /**
  * HTTP REST API utility methods to communicate with mailchimp.<p>
@@ -19,8 +19,6 @@ import java.util.Base64;
 public class HttpUtils {
 
     public static void testBasicAuth() {
-
-
 
         try {
             URL url = new URL(MailChimpConstants.API_HOME);
@@ -42,8 +40,18 @@ public class HttpUtils {
         }
     }
 
+    public static String getHtmlFromUrl(String urlAddress) {
+        String htmlContent = "";
+        try {
+            htmlContent = new Scanner(new URL(urlAddress).openStream(), "UTF-8").useDelimiter("\\A").next();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return htmlContent;
+    }
+
     public static void main(String[] args) {
-         testBasicAuth();
+        testBasicAuth();
     }
 
 }

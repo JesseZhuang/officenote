@@ -16,6 +16,12 @@ public class TimeUtils {
     public static final DateTimeFormatter CAMPAIGN_TITLE = DateTimeFormatter.ofPattern("yyyy-LL-dd");
 
 
+    /**
+     * @return the Monday before the most recent one.
+     */
+    public static LocalDate getLastMonday() {
+        return getComingMonday().minusDays(14);
+    }
 
     public static LocalDate getComingMonday(){
         int old = TODAY.getDayOfWeek().getValue();
@@ -29,6 +35,11 @@ public class TimeUtils {
 //        return monday6am.atZone(ZoneId.of("Z"));
     }
 
+    public static LocalDate parseDate(String date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yy");
+        return LocalDate.parse(date, formatter);
+    }
+
     public static void main(String[] args) {
         ZonedDateTime nowUTC = ZonedDateTime.now(ZoneOffset.UTC);
 
@@ -38,5 +49,11 @@ public class TimeUtils {
         for( int i = 1; i < 7; i++) {
             LOGGER.info(getComingMonday6am().format(CAMPAIGN_SCHEDULE));
         }
+
+        System.out.println(LocalDate.of(2003, 5, 23));
+
+        System.out.println(LocalDate.of(2003, 5, 23).isAfter(LocalDate.of(2003, 5, 22)));
+
+        System.out.println(getLastMonday());
     }
 }
