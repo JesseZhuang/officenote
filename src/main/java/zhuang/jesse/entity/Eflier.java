@@ -1,14 +1,16 @@
 package zhuang.jesse.entity;
 
-import java.time.LocalDate;
+import zhuang.jesse.constants.EflierConstants;
+
+import java.util.Optional;
 
 public class Eflier {
 
     private String title;
     private String downloadUrl;
-    private LocalDate postedDate;
+    private Optional<String> postedDate;
 
-    public Eflier(String title, String downloadUrl, LocalDate postedDate) {
+    public Eflier(String title, String downloadUrl, Optional<String> postedDate) {
         this.title = title;
         this.downloadUrl = downloadUrl;
         this.postedDate = postedDate;
@@ -20,10 +22,10 @@ public class Eflier {
         final String urlPrefix = ", eFlier at ";
         final String datePrefix = ": posted ";
 
-        return prefix + title + urlPrefix + downloadUrl + datePrefix + postedDate;
+        return prefix + title + urlPrefix + downloadUrl + datePrefix + postedDate.orElse(EflierConstants.UNKOWN_DATE);
     }
 
     public static void main(String[] args) {
-
+        System.out.println(new Eflier("title", "url", Optional.ofNullable(null)));
     }
 }

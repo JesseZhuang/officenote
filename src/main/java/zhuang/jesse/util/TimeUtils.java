@@ -1,5 +1,7 @@
 package zhuang.jesse.util;
 
+import zhuang.jesse.constants.EflierConstants;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Logger;
@@ -36,6 +38,7 @@ public class TimeUtils {
     }
 
     public static LocalDate parseDate(String date){
+        if (date == null) return null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yy");
         return LocalDate.parse(date, formatter);
     }
@@ -55,5 +58,6 @@ public class TimeUtils {
         System.out.println(LocalDate.of(2003, 5, 23).isAfter(LocalDate.of(2003, 5, 22)));
 
         System.out.println(getLastMonday());
+
     }
 }

@@ -8,6 +8,7 @@ import zhuang.jesse.util.TimeUtils;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,16 +31,20 @@ public class EflierCrawler {
         List<Eflier> efilers = new ArrayList<>();
         String eflierSection = getEflierSection(pageUrl);
         int startIndex = 0, endIndex;
+        LocalDate lastMonday = TimeUtils.getLastMonday();
         while (startIndex >= 0) {
             endIndex = findIndexOrThrowException(eflierSection, END_IDENTIFIER, startIndex);
 //            System.out.println("jesse " + endIndex);
             String eflierLine = getOneEflierLine(eflierSection, startIndex, endIndex);
 //            System.out.println("jesse " + eflierLine);
 
-            LocalDate postedDate = TimeUtils.parseDate(getPostedDate(eflierLine));
-            if (postedDate.isBefore(TimeUtils.getLastMonday())) break;
+            String postedDateString = getPostedDate(eflierLine);
 
-            efilers.add(new Eflier(getEflierTitle(eflierLine), getEflierDownloadUrl(eflierLine), postedDate));
+            LocalDate postedDate = TimeUtils.parseDate(postedDateString);
+            if (postedDate != null && postedDate.isBefore(lastMonday)) break;
+
+            efilers.add(new Eflier(getEflierTitle(eflierLine), getEflierDownloadUrl(eflierLine),
+                    Optional.ofNullable(postedDateString)));
             startIndex = eflierSection.indexOf(START_IDENTIFIER, endIndex);
 //            System.out.println("jesse "+ startIndex);
         }
@@ -49,7 +54,11 @@ public class EflierCrawler {
 
     private String getEflierSection(String pageUrl) {
         String htmlContent = HttpUtils.getHtmlFromUrl(pageUrl);
-        return htmlContent.substring(getListStartIndex(htmlContent), getListEndIndex(htmlContent));
+        int startIndex = getListStartIndex(htmlContent);
+        int endIndex = getListEndIndex(htmlContent, startIndex);
+//        System.out.println("start index " + startIndex);
+//        System.out.println("end index " + endIndex);
+        return htmlContent.substring(startIndex, endIndex);
     }
 
     private String getOneEflierLine(String fliers, int startIndex, int endIndex) {
@@ -85,18 +94,19 @@ public class EflierCrawler {
 //            return eflierLine.substring(index + matcher.start());
             return matcher.group();
         } else {
-            throw new RuntimeException("Cannot find eflier posted date in " + eflierLine);
+//            throw new RuntimeException("Cannot find eflier posted date in " + eflierLine);
+            return null;
         }
     }
 
     private int getListStartIndex(String htmlContent) {
-        final String listStartIdentifier = "<ul>\n    <li>";
+        final String listStartIdentifier = "<ul>    <li>";
         return findIndexOrThrowException(htmlContent, listStartIdentifier);
     }
 
-    private int getListEndIndex(String htmlContent) {
-        final String listEndIdentifier = "</li>\n</ul>";
-        return findIndexOrThrowException(htmlContent, listEndIdentifier) + END_IDENTIFIER.length();
+    private int getListEndIndex(String htmlContent, int listStartIndex) {
+        final String listEndIdentifier = "</li></ul>";
+        return findIndexOrThrowException(htmlContent, listEndIdentifier, listStartIndex) + END_IDENTIFIER.length();
     }
 
     private int findIndexOrThrowException(String text, String pattern) {
@@ -124,7 +134,8 @@ public class EflierCrawler {
 //
             System.out.println(crawler.getEflierSection(pageUrl));
             System.out.println("----------");
-            System.out.println(crawler.crawlEflierOnPage(pageUrl));
+            for (Eflier flier : crawler.crawlEflierOnPage(pageUrl)) System.out.println(flier);
+            System.out.println("------");
         }
 //        System.out.println(crawler.crawlAllEfliers());
 

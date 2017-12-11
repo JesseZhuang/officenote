@@ -70,5 +70,8 @@ public class FileUtils {
             String value = properties.getProperty(key);
             System.out.println("Key : " + key + ", Value : " + value);
         }
+
+        Integer one = new Integer(1);
+        System.out.println(one == 1);
     }
 }

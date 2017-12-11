@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -68,12 +69,12 @@ public class OfficeNotes {
         System.out.println("Read gmail job finished at " + LocalDateTime.now() +
                 " \nFinished reading office note submissions.");
 
-        blurbs.add(buildEflierBourbWithCrawler());
+        blurbs.addAll(buildEflierBourbWithCrawler());
         System.out.println("Finished crawling efliers.");
-//        if (blurbs.size() == 0) {
-//            System.out.println("No submissions this week.\n");
-//            System.exit(1);
-//        }
+        if (blurbs.size() == 0) {
+            System.out.println("No submissions this week.\n");
+            System.exit(1);
+        }
 
         if (doArchive) {
             Blurb.updateBlurbs(NEW_BLURB, STAYON_BLURB, ARCHIVED_BLURB);
@@ -82,23 +83,22 @@ public class OfficeNotes {
         Blurb.writeBlurbs(saveToFile, blurbs);
     }
 
-    private static Blurb buildEflierBourbWithCrawler() {
+    private static List<Blurb> buildEflierBourbWithCrawler() {
+        List<Blurb> eflierBlurb = new ArrayList<>();
         final String title = "Latest Community-eFliers";
         EflierCrawler crawler = new EflierCrawler();
         List<Eflier> efliers = crawler.crawlAllEfliers();
-        String content = "The following efliers are crawled by Jesse Zhuang from " +
+        String content = "The following efliers are obtained by Jesse Zhuang from " +
                 "http://www.edmonds.wednet.edu/community/community_e_fliers and error can be caused by irregular " +
                 "format of the listed efliers. In case of error, you should help to contact Oscar " +
                 "at halperto@edmonds.wednet.edu or (425)431-7045 and Edmonds School District " +
                 "to provide feedback that the format should be " +
                 "kept with a standard.";
-        if (efliers.isEmpty()) {
-            content += "<br />No new e-fliers for the past two weeks or it can be that Oscar changed format again.";
-        } else {
+        if (!efliers.isEmpty()) {
             for (Eflier flier : efliers) content += flier;
-
+            eflierBlurb.add(new Blurb(title, content, 1, 1));
         }
-        return new Blurb(title, content, 1, 1);
+        return eflierBlurb;
     }
 
     private static List<Blurb> addBlurbs(String newBlurbFile,

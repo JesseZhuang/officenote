@@ -73,7 +73,6 @@ public class ReadGmail {
                 System.out.println("Empty inbox folder.");
                 inbox.close(false);
                 store.close();
-                System.exit(1);
             }
 
             // start parsing blurbs, note numbering start from 1
