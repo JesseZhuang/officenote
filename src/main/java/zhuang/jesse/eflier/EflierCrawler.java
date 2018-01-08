@@ -41,6 +41,7 @@ public class EflierCrawler {
             String postedDateString = getPostedDate(eflierLine);
 
             LocalDate postedDate = TimeUtils.parseDate(postedDateString);
+//            System.out.println("posted date " + postedDate);
             if (postedDate != null && postedDate.isBefore(lastMonday)) break;
 
             efilers.add(new Eflier(getEflierTitle(eflierLine), getEflierDownloadUrl(eflierLine),
