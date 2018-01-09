@@ -5,8 +5,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,8 +50,12 @@ public class TimeUtils {
 //        DateTimeFormatter fourDigitYear = DateTimeFormatter.ofPattern("M/d/yyyy");
 //        DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendOptional(fourDigitYear).
 //                appendOptional(twoDigitYear).toFormatter();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[M/d/yyyy][M/d/yy]");
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy"); does not work for 01/05/18
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("M/d/")
+                .optionalStart().appendPattern("uuuu").optionalEnd()
+                .optionalStart().appendValueReduced(ChronoField.YEAR, 2, 2, LocalDate.now().minusYears(80))
+                .optionalEnd().toFormatter();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[M/d/yyyy][M/d/yy]");
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy"); // does not work for 01/05/18
         LocalDate result = null;
         try {
             result = LocalDate.parse(date, formatter);
@@ -80,5 +87,8 @@ public class TimeUtils {
         System.out.println(parseDate("01/05/18")); //0018-01-05 with M/d/y, Exception with M/d/yyyy
         System.out.println(parseDate("01/05/97")); //2097-01-05 with [M/d/yyyy][M/d/yy], ideally should be 1997
         System.out.println(parseDate("01/15/02"));
+        System.out.println(parseDate("01/15/22"));
+        System.out.println(parseDate("01/15/37"));
+        System.out.println(parseDate("01/15/38"));
     }
 }
