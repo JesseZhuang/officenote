@@ -129,7 +129,7 @@ public class ReadGmail {
                         String flyerLink = msgContent
                                 .substring(startInd,
                                         msgContent.indexOf("</li></ul>" + CONTENT_TAG2, startInd))
-                                .replaceAll(System.lineSeparator(), "")
+                                .replaceAll("\r\n", "")
                                 .replace("</li><li>", " and ");
 
                         blurbs.add(new Blurb(title, content, 1, howManyWeeks, flyerLink));

@@ -463,14 +463,30 @@ public class Blurb {
     public static void main(String[] args) {
         // use "..\\io\\blurbs-lastweek.html" if run from command line
         // List<Blurb> blurbs = Blurb.readBlurbs("io/new-blurbs-test.html");
-        List<Blurb> blurbs = Blurb.readBlurbs("io/new-blurbs.html");
+
+//        List<Blurb> blurbs = Blurb.readBlurbs("io/new-blurbs.html");
 
         // for (Blurb blurb : blurbs) {
         // System.out.println(blurb);
         // }
 
-        Blurb.writeBlurbsForMailchimp("io/forMailchimp-test.html", blurbs);
-        Blurb.writeBlurbsForGoogleDoc("io/forGoogleDoc-test.txt", blurbs);
+//        Blurb.writeBlurbsForMailchimp("io/forMailchimp-test.html", blurbs);
+//        Blurb.writeBlurbsForGoogleDoc("io/forGoogleDoc-test.txt", blurbs);
+
+
+        String testUrl = "<a href='http://www.madronabearfacts.com/index.php?gf-download=2018%2F01%2FUSO-" +
+                "Ticket-Order.pdf&amp;form-id=1&amp;field-id=21&amp;hash=b5cb16e82f04e6360422510b0b156a3f83f5253519e" +
+                "788a822157a6565a92e59' target='_blank' title='Click to view'>USO-Ticket-Order.pdf</a></li>\n" +
+                "<li><a href='http://www.madronabearfacts.com/index.php?gf-download=2018%2F01%2FUSO-2.pdf&amp;form" +
+                "-id=1&amp;field-id=21&amp;hash=4e269dec6008c7672e40f1f60c20cc96d2f0d3679210b34718306eb21902" +
+                "d15b' target='_blank' title='Click to view'>USO-2.pdf</a>";
+
+        Blurb blurb = new Blurb("test", "test", 1, 1, testUrl);
+
+        String flyerUrls = getFlyerURLs(blurb);
+
+        System.out.println(flyerUrls);
+        System.out.println(HtmlConverter.convert(flyerUrls));
 
     }
 }

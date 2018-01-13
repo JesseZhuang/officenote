@@ -42,13 +42,16 @@ public class HtmlConverter {
     private static String convertURL(String str) {
         // some people does not add http:// to the link address
         String w = "www";
-        if (str.toLowerCase().contains(w)) {
-            int ind = str.indexOf(w);
+        String strLowerCase = str.toLowerCase();
+        if (strLowerCase.contains(w)) {
+            int ind = strLowerCase.indexOf(w);
             while (ind < str.length() && ind >= 0) {
-                if (str.charAt(ind - 1) != '/') str = str.substring(0, ind)
-                        + "http://" + str.substring(ind);
+                if (str.charAt(ind - 1) != '/') {
+                    str = str.substring(0, ind) + "http://" + str.substring(ind);
+                    strLowerCase = strLowerCase.substring(0, ind) + "http://" + strLowerCase.substring(ind);
+                }
 
-                ind = str.indexOf(w, ind + "http://".length());
+                ind = strLowerCase.indexOf(w, ind + "http://".length());
             }
         }
         str = str.replaceAll(URL_PATTERN, URL_REPL);
@@ -100,7 +103,8 @@ public class HtmlConverter {
 
         String sa = " bla bla at www.bearfacts.com/man/ui/noname.pdf\n"
                 + "bla bla at www.bearfacts.com/noname.pdf\n"
-                + "bla bla at WWW.bearfacts.com/noname.pdf\n";
+                + "bla bla at WWW.bearfacts.com/noname.pdf\n"
+                + "bla bla at WWW.bearfacts.com/noname.pdf.\n";
 
         System.out.println(HtmlConverter.convertURL(sa));
 

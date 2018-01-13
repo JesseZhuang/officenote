@@ -38,7 +38,15 @@ public class EflierCrawler {
             String eflierLine = getOneEflierLine(eflierSection, startIndex, endIndex);
 //            System.out.println("jesse " + eflierLine);
 
-            String postedDateString = getPostedDate(eflierLine);
+            String postedDateString;
+            try {
+//                return null if date format wrong, cannot parse
+                postedDateString = getPostedDate(eflierLine);
+            } catch (Exception e) {
+//                2018/01/13 one eflier line with just one space in there, no other content
+                startIndex = eflierSection.indexOf(START_IDENTIFIER, endIndex);
+                continue;
+            }
 
             LocalDate postedDate = TimeUtils.parseDate(postedDateString);
 //            System.out.println("posted date " + postedDate);
@@ -89,6 +97,7 @@ public class EflierCrawler {
         int index = findIndexOrThrowException(eflierLine, "posted");
 //        System.out.println("jesse " + index);
         String datePart = eflierLine.substring(index);
+//        assumption is month/date/year format
         Matcher matcher = Pattern.compile("\\d+/\\d+/\\d+").matcher(datePart);
         if (matcher.find()) {
 //            System.out.println("jesse " + eflierLine.substring(matcher.start()));

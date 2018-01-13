@@ -122,6 +122,7 @@ public class OfficeNotes {
         writeFiles();
         mailchimpJob();
         googleDocJob();
+        System.out.println("Finished whole job.");
     }
 
     private static void mailchimpJob() {
