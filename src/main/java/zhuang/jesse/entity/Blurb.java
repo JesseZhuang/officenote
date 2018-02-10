@@ -3,7 +3,7 @@ package zhuang.jesse.entity;
 
 import zhuang.jesse.constants.MailChimpConstants;
 import zhuang.jesse.util.FileUtils;
-import zhuang.jesse.util.HtmlConverter;
+import zhuang.jesse.util.HtmlUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -115,19 +115,13 @@ public class Blurb {
      */
     public String toPureText() {
         String content = this.content.replace("<br>", System.lineSeparator());
-        content = removeHtml(content);
+        content = HtmlUtils.removeHtml(content);
         String title = this.title;
-        title = removeHtml(title);
+        title = HtmlUtils.removeHtml(title);
         String res = "Blurb title= " + title + "\nhowManyWeeks= (" + curWeek
                 + " of " + numWeeks + " Weeks)" + "\ncontent=\n" + content;
         if (flyerLink != null) res += "\nflyer link= " + this.flyerURLs;
         return res + "\n\n";
-    }
-
-    private String removeHtml(String str) {
-        return str.replace("<br />", System.lineSeparator()).replace("&amp;", "&")
-                .replace("&#039;", "'").replace("&quot;", "\"")
-                .replaceAll("<(\"[^\"]*\"|'[^']*'|[^'\">])*>", "");
     }
 
     private void update() {
@@ -281,7 +275,7 @@ public class Blurb {
      * on top. CSS codes are included to format the blurb title and content with
      * different fonts. Web url links, flyer links, and email addresses are
      * converted to appropriate formatted html code with another class
-     * {@code HtmlConverter} in the same package.
+     * {@code HtmlUtils} in the same package.
      * <p>
      * If a picture flyer is available, it is included on the bottom of the
      * corresponding blurb.
@@ -382,7 +376,7 @@ public class Blurb {
 
             for (Blurb blurb : blurbs) {
                 String flyerLink = blurb.flyerLink;
-                String content = HtmlConverter.convert(blurb.content);
+                String content = HtmlUtils.convert(blurb.content);
                 String tPre = tPre1 + counter + tPre2 + counter + tPre3;
                 wr.write(tPre + blurb.title + tEnd);
                 if (flyerLink == null) wr.write(cPre + content + cEnd);
@@ -486,7 +480,7 @@ public class Blurb {
         String flyerUrls = getFlyerURLs(blurb);
 
         System.out.println(flyerUrls);
-        System.out.println(HtmlConverter.convert(flyerUrls));
+        System.out.println(HtmlUtils.convert(flyerUrls));
 
     }
 }

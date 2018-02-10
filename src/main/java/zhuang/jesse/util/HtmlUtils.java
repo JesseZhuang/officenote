@@ -22,7 +22,7 @@ package zhuang.jesse.util;
  * <li>list item 2
  * </ul>
  */
-public class HtmlConverter {
+public class HtmlUtils {
     // *: 0 or more; ?: 0 or 1; + 1 or more; re{n}: exactly n repeats of re
     // [] matches any single character in brackets
     public static final String URL_PATTERN = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@"
@@ -94,6 +94,12 @@ public class HtmlConverter {
         return str;
     }
 
+    public static String removeHtml(String str) {
+        return str.replace("<br />", System.lineSeparator()).replace("&amp;", "&")
+                .replace("&#039;", "'").replace("&quot;", "\"")
+                .replaceAll("<(\"[^\"]*\"|'[^']*'|[^'\">])*>", "");
+    }
+
     private static void testRE() {
         // String s = "one space, two space: , 3 spaces: ;";
         // System.out.println(s);
@@ -106,14 +112,14 @@ public class HtmlConverter {
                 + "bla bla at WWW.bearfacts.com/noname.pdf\n"
                 + "bla bla at WWW.bearfacts.com/noname.pdf.\n";
 
-        System.out.println(HtmlConverter.convertURL(sa));
+        System.out.println(HtmlUtils.convertURL(sa));
 
         String sb = "mandante at dmendoza0715@gmail.com or Gretchen Gruender\n"
                 + " at gretchen_gruender@yahoo.com\n madronatickets@gmail.com\n "
                 + "with any questions at madronastem@gmail.com and at "
                 + "madronaartaucti​on@gmail.com aapple@grile.com.\n";
 
-        System.out.println(HtmlConverter.convertEmail(sb));
+        System.out.println(HtmlUtils.convertEmail(sb));
         System.out.println("give madronaartauction@gmail.com"
                 .replaceAll(EMAIL_PATTERN, EMAIL_REPL));
         System.out.println("give madronaartaucti​on@gmail.com"
@@ -143,9 +149,9 @@ public class HtmlConverter {
 
         String plists2 = "<br />•	Test1<br />•	Test2 <br /> new paragraph";
 
-        System.out.println(HtmlConverter.convertList(p2lists));
+        System.out.println(HtmlUtils.convertList(p2lists));
         System.out.println();
-        System.out.println(HtmlConverter.convertList(plists));
+        System.out.println(HtmlUtils.convertList(plists));
         System.out.println();
         System.out.println(convertList(plists2));
 

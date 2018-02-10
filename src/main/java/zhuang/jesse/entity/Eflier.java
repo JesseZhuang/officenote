@@ -1,6 +1,7 @@
 package zhuang.jesse.entity;
 
 import zhuang.jesse.constants.EflierConstants;
+import zhuang.jesse.util.HtmlUtils;
 
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class Eflier {
         final String urlPrefix = ", eFlier at ";
         final String datePrefix = ": posted ";
 
-        return prefix + title + urlPrefix + downloadUrl + datePrefix + postedDate.orElse(EflierConstants.UNKOWN_DATE);
+        return prefix + HtmlUtils.removeHtml(title) + urlPrefix + downloadUrl + datePrefix + postedDate.orElse(EflierConstants.UNKOWN_DATE);
     }
 
     public static void main(String[] args) {

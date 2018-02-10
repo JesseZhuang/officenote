@@ -30,7 +30,7 @@ import java.util.Scanner;
  * version 2.2 update (2/26/2016)
  * <ul>
  * <li>process the e-flier email with JavaMail API;
- * <li>convert list items to proper format in HtmlConverter with regular
+ * <li>convert list items to proper format in HtmlUtils with regular
  * expression.
  * </ul>
  * Version 2.1 features(done 02/08/16):
