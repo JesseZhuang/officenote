@@ -34,16 +34,34 @@ import java.util.stream.Collectors;
  * news blurbs for school parent committee chair to proofread and edit.
  */
 public class Blurb {
+    /**
+     * blurb title.
+     */
     protected String title;
+    /**
+     * blurb content.
+     */
     private String content;
+    /**
+     * number of weeks to publish in office notes.
+     */
     private int numWeeks;
     /**
      * starting from 1, increment each week the blurb is included in the
      * newsletter.
      */
     private int curWeek;
+    /**
+     * All uploaded flyer links in html, can contain multiple links.
+     */
     private String flyerLink;
+    /**
+     * All the flyer urls, connected with 'and'. Used in pure text version for MIT chair google doc review.
+     */
     private String flyerURLs;
+    /**
+     * The first flyer that is an image, if there is one.
+     */
     private String imageURL;
 
     public String getTitle() {
@@ -407,12 +425,25 @@ public class Blurb {
         return blurbs;
     }
 
+    /**
+     * get flyer urls and process flylink, cut if file name too long.
+     *
+     * @param blurb
+     * @return
+     */
     private static String getFlyerURLs(Blurb blurb) {
         String flyerLink = blurb.flyerLink;
         String flyerURLs = "";
         int ind = -1, counter = 0;
         while ((ind = flyerLink.indexOf("http", ind + 1)) > 0) {
             String flyerURL = flyerLink.substring(ind, flyerLink.indexOf("'", ind));
+            int filenameStart = flyerLink.indexOf(">", ind) + 1;
+            int filenameDot = flyerLink.indexOf(".", filenameStart);
+            String filename = flyerLink.substring(filenameStart, filenameDot);
+            // if filename longer than 35, keep last 10 chars
+            if (filenameDot - filenameStart > 35) {
+                flyerLink = flyerLink.substring(0, filenameStart) + flyerLink.substring(filenameDot - 10);
+            }
             if (counter > 0) flyerURLs += " and ";
             // String flyerURLLC = flyerURL.toLowerCase();
             // only care about the first image URL
@@ -423,6 +454,7 @@ public class Blurb {
             flyerURLs += flyerURL;
             counter++;
         }
+        blurb.flyerLink = flyerLink;
         return flyerURLs;
     }
 
@@ -468,16 +500,22 @@ public class Blurb {
 //        Blurb.writeBlurbsForGoogleDoc("io/forGoogleDoc-test.txt", blurbs);
 
 
-        String testUrl = "<a href='http://www.madronabearfacts.com/index.php?gf-download=2018%2F01%2FUSO-" +
-                "Ticket-Order.pdf&amp;form-id=1&amp;field-id=21&amp;hash=b5cb16e82f04e6360422510b0b156a3f83f5253519e" +
-                "788a822157a6565a92e59' target='_blank' title='Click to view'>USO-Ticket-Order.pdf</a></li>\n" +
-                "<li><a href='http://www.madronabearfacts.com/index.php?gf-download=2018%2F01%2FUSO-2.pdf&amp;form" +
-                "-id=1&amp;field-id=21&amp;hash=4e269dec6008c7672e40f1f60c20cc96d2f0d3679210b34718306eb21902" +
-                "d15b' target='_blank' title='Click to view'>USO-2.pdf</a>";
+        String testUrl = "<a href='http://www.madronabearfacts.com/index.php?gf-download=2018%2F03%2FMIT-General-Meet" +
+                "ing-minutes-Jan-2018.docx&amp;form-id=1&amp;field-id=21&amp;hash=d64ef1eb4e4f2c1b28698fa4c674300" +
+                "3ffa242b35a42bee05484aea27570936e' target='_blank' title='Click to view'>MIT-General-Meeting-" +
+                "minutes-Jan-2018.docx</a> and <a href='http://www.madronabearfacts.com/index.php?gf-download" +
+                "=2018%2F03%2FMIT-General-Meeting-minutes-Feb-2018.docx&amp;form-id=1&amp;field-id=21&amp" +
+                ";hash=bb762b4975528efe8dbf1028f827f273384bbdeb9c3b74d0a1f1b2bad8e6eadc' target='_blank'" +
+                " title='Click to view'>MIT-General-Meeting-minutes-Feb-2018.docx</a> and " +
+                "<a href='http://www.madronabearfacts.com/index.php?gf-download=2018%2F03%2F" +
+                "MIT-General-Meeting-minutes-Dec-2017.docx&amp;form-id=1&amp;field-id=21&amp;hash" +
+                "=7ccfd956613e1daecaefd05b1f64159079744cdc2c70412b88cacc8ac5fb73e7' target='_blank' " +
+                "title='Click to view'>MIT-General-Meeting-minutes-Dec-2017.docx</a>";
 
         Blurb blurb = new Blurb("test", "test", 1, 1, testUrl);
 
         String flyerUrls = getFlyerURLs(blurb);
+        System.out.println(blurb);
 
         System.out.println(flyerUrls);
         System.out.println(HtmlUtils.convert(flyerUrls));

@@ -101,7 +101,7 @@ public class HtmlUtils {
     }
 
     private static void testRE() {
-        // String s = "one space, two space: , 3 spaces: ;";
+        // String s = "one space: , two space:  , 3 spaces:   ;";
         // System.out.println(s);
         // s = s.replaceAll("\\s{2,}", " ");
         //

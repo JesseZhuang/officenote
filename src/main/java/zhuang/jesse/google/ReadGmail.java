@@ -135,17 +135,6 @@ public class ReadGmail {
                         blurbs.add(new Blurb(title, content, 1, howManyWeeks, flyerLink));
                     } else blurbs.add(new Blurb(title, content, 1, howManyWeeks));
                 }
-//                else if (msgSubject.matches(TARGET2RE)) {
-//                    try {
-//                        // bullets in this email is · different from what google
-//                        // forms uses •
-//                        // MimeMultipart m = (MimeMultipart) msg.getContent();
-//                        String title = "Latest Community-eFliers";
-//                        eflier = new Blurb(title, getMultipartChild(msg), 1, 1);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
             }
             // it's easier to remove the last element in resizing array
             if (eflier != null) blurbs.add(eflier);
@@ -223,6 +212,7 @@ public class ReadGmail {
 
     }
 
+    @Deprecated
     private static String getMultipartChild(Part p)
             throws MessagingException, IOException {
         final String EFLIERS = "You can find many activities such as Sports and"
