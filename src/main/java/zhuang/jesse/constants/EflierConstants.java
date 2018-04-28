@@ -6,7 +6,7 @@ import java.util.List;
 
 public class EflierConstants {
 
-    public static final String ESD_DOMAIN = "http://www.edmonds.wednet.edu";
+    public static final String ESD_DOMAIN = "https://www.edmonds.wednet.edu";
     public static final String EFLIER_PATH = "/community/community_e_fliers/";
     public static final String UNKOWN_DATE = "bad_date_format";
 
