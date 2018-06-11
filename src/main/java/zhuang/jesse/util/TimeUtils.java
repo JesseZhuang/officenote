@@ -1,5 +1,7 @@
 package zhuang.jesse.util;
 
+import com.google.api.client.util.DateTime;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,6 +37,10 @@ public class TimeUtils {
     public static LocalDate getComingMonday() {
         int old = TODAY.getDayOfWeek().getValue();
         return TODAY.plusDays(8 - old);
+    }
+
+    public static long getTwoMonthsFromNow() {
+        return TODAY.plusMonths(2).atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000;
     }
 
     public static ZonedDateTime getComingMonday6am() {

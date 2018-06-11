@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import zhuang.jesse.constants.GoogleConstants;
 import zhuang.jesse.constants.MailChimpConstants;
 import zhuang.jesse.util.FileUtils;
+import zhuang.jesse.util.TimeUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -59,12 +60,14 @@ public class ReadGcal {
 
         // List the next 15 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
+        DateTime twoMonthsFromNow = new DateTime(TimeUtils.getTwoMonthsFromNow());
         Events events;
         events = service.events().list(GoogleConstants.properties.getProperty("bearfacts.email"))
-                .setMaxResults(15).setTimeMin(now).setOrderBy("startTime")
+                .setTimeMax(twoMonthsFromNow).setTimeMin(now).setOrderBy("startTime")
                 .setSingleEvents(true).execute();
         Events officeNotesEvents = service.events()
-                .list(GoogleConstants.properties.getProperty("officenotes.email")).setMaxResults(15).setTimeMin(now)
+                .list(GoogleConstants.properties.getProperty("officenotes.email"))
+                .setTimeMax(twoMonthsFromNow).setTimeMin(now)
                 .setOrderBy("startTime").setSingleEvents(true).execute();
         List<Event> items = events.getItems();
         items.addAll(officeNotesEvents.getItems());
@@ -219,11 +222,12 @@ public class ReadGcal {
         // List the next 15 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
         Events events;
+        DateTime twoMonthsFromNow = new DateTime(TimeUtils.getTwoMonthsFromNow());
         events = service.events().list("madronabearfacts@gmail.com")
-                .setMaxResults(15).setTimeMin(now).setOrderBy("startTime")
+                .setTimeMin(now).setOrderBy("startTime").setTimeMax(twoMonthsFromNow)
                 .setSingleEvents(true).execute();
         Events officeNotesEvents = service.events()
-                .list("madronaofficenotes@gmail.com").setMaxResults(15).setTimeMin(now)
+                .list("madronaofficenotes@gmail.com").setTimeMin(now).setTimeMax(twoMonthsFromNow)
                 .setOrderBy("startTime").setSingleEvents(true).execute();
         List<Event> items = events.getItems();
         items.addAll(officeNotesEvents.getItems());
