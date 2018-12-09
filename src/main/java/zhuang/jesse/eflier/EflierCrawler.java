@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class EflierCrawler {
 
-    private static final String START_IDENTIFIER = "<li>";
+    private static final String START_IDENTIFIER = "<li";
     private static final String END_IDENTIFIER = "</li>";
     private static final String URL_IDENTIFIER = "<a href=\"";
 
@@ -111,7 +111,7 @@ public class EflierCrawler {
     }
 
     private int getListStartIndex(String htmlContent) {
-        final String listStartIdentifier = "<ul>    <li>";
+        final String listStartIdentifier = "<ul>    <li";
         return findIndexOrThrowException(htmlContent, listStartIdentifier);
     }
 

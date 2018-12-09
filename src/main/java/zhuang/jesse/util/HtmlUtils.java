@@ -95,6 +95,7 @@ public class HtmlUtils {
     }
 
     public static String removeHtml(String str) {
+        "test".replace(System.lineSeparator(), "").replaceAll(System.lineSeparator(), "");
         return str.replace("<br />", System.lineSeparator()).replace("&amp;", "&")
                 .replace("&#039;", "'").replace("&quot;", "\"")
                 .replaceAll("<(\"[^\"]*\"|'[^']*'|[^'\">])*>", "");
