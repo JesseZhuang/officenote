@@ -71,8 +71,9 @@ public class EflierCrawler {
     }
 
     private String getOneEflierLine(String fliers, int startIndex, int endIndex) {
-        return fliers.substring(findIndexOrThrowException(fliers, START_IDENTIFIER, startIndex)
-                + START_IDENTIFIER.length(), endIndex);
+        final String closeTag = ">";
+        startIndex = findIndexOrThrowException(fliers, START_IDENTIFIER, startIndex);
+        return fliers.substring(findIndexOrThrowException(fliers, closeTag, startIndex) + closeTag.length(), endIndex);
     }
 
     private String getEflierTitle(String eflierLine) {
@@ -89,7 +90,7 @@ public class EflierCrawler {
         int startIndex = findIndexOrThrowException(eflierLine, URL_IDENTIFIER) + URL_IDENTIFIER.length();
         int endIndex = findIndexOrThrowException(eflierLine, "\"", startIndex);
         String downloadUrl = eflierLine.substring(startIndex, endIndex).replace(" ", "%20");
-        if (downloadUrl.startsWith("http")) return  downloadUrl;
+        if (downloadUrl.startsWith("http")) return downloadUrl;
         return EflierConstants.ESD_DOMAIN + downloadUrl;
     }
 
